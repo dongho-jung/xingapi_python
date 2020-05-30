@@ -3,7 +3,9 @@ import pytest
 from xing import Xing
 
 
-def test_login_success(caplog):
+@pytest.mark.parametrize("demo", [True, False], ids=["demo-server", "real-server"])
+def test_login_success(demo, caplog):
+    Xing.connect(demo=demo)
     Xing.login()
     assert "login success" in caplog.text
 
@@ -15,7 +17,8 @@ def test_login_success(caplog):
 )
 @pytest.mark.parametrize("demo", [True, False], ids=["demo-server", "real-server"])
 def test_login_fail(params, demo, caplog):
-    Xing.login(demo=demo, **params)
+    Xing.connect(demo=demo)
+    Xing.login(**params)
     if not (demo is True and "cert_pw" in params):
         assert "login fail" in caplog.text
 
