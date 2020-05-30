@@ -11,9 +11,9 @@ def test_login_success(caplog):
 @pytest.mark.parametrize(
     "params",
     [{"id_": "WRONG"}, {"pw": "WRONG"}, {"cert_pw": "WRONG"}],
-    ids=["id", "pw", "cert_pw"],
+    ids=["wrong_id", "wrong_pw", "wrong_cert_pw"],
 )
-@pytest.mark.parametrize("demo", [True, False], ids=["demo", "non-demo"])
+@pytest.mark.parametrize("demo", [True, False], ids=["demo-server", "real-server"])
 def test_login_fail(params, demo, caplog):
     Xing.login(demo=demo, **params)
     if not (demo is True and "cert_pw" in params):
