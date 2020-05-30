@@ -38,4 +38,5 @@ def test_get_account_sanity_checks(params, demo):
         account_number = Xing.get_account(i)
         Xing.get_account_name(account_number)
         Xing.get_account_detail_name(account_number)
+        Xing.get_account_nickname(account_number)
     Xing.disconnect()

@@ -123,3 +123,7 @@ class Xing:
     @classmethod
     def get_account_detail_name(cls, account_number):
         return cls.session.GetAcctDetailName(account_number)
+
+    @classmethod
+    def get_account_nickname(cls, account_number):
+        return cls.session.GetAcctNickname(account_number)
