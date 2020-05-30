@@ -1,5 +1,5 @@
-from util.deco import callback
-from util.get_credential import get_secrets
+from util.deco import callback, post_quit
+from util.secrets import get_secrets
 from com.XASession import get_session
 import util.logger
 
@@ -11,13 +11,16 @@ class Xing:
 
     @classmethod
     def connect(
-        cls, demo: str = True,
+        cls, demo: bool = True,
     ):
         """
         Connect with Ebest secutiry server
         Args:
-            demo (str) <True>: True -> demo server / False -> real server
+            demo (bool) <True>: True -> demo server / False -> real server
         """
+        if cls.is_connected():
+            cls.disconnect()
+
         url = "demo.ebestsec.co.kr" if demo else "hts.ebestsec.co.kr"
         port = 20001
         logger.info(f"connect attempt: {url}:{port}")
@@ -39,7 +42,14 @@ class Xing:
         """
         Return current connected server name
         """
-        return Xing.session.GetServerName()
+        if cls.is_connected():
+            servername = Xing.session.GetServerName()
+            if servername.strip():
+                return servername
+            else:
+                raise AssertionError("not yet login")
+        else:
+            raise AssertionError("not yet connected")
 
     @classmethod
     def is_demo(cls):
@@ -47,15 +57,15 @@ class Xing:
         Return True if current connected server is demo server
         """
         if cls.get_servername().startswith("MIS"):
-            return False
-        else:
             return True
+        else:
+            return False
 
     @classmethod
     @callback
     def login(
         cls,
-        demo=None,
+        demo: bool = True,
         secret_path: str = None,
         id_: str = None,
         pw: str = None,
@@ -64,7 +74,7 @@ class Xing:
         """
         Login into Ebest secutiry server
         Args:
-            demo (str) <True>: True -> demo server / False -> real server
+            demo (bool) <True>: True -> demo server / False -> real server
             secret_path (str): path in which the secret file exists
             id_ (str): id
             pw (str): password
@@ -72,14 +82,31 @@ class Xing:
         """
         logger.info("connection check")
         if not cls.is_connected():
+            logger.warning("not yet connected")
             cls.connect(demo=demo)
-
+        elif cls.is_login():
+            if cls.is_demo() is not demo:
+                logger.warning(f"alredy connected but server is different")
+                cls.connect(demo=demo)
+            else:
+                logger.info("already login")
+                post_quit()
+                return
         logger.info("login attempt")
         secrets = get_secrets(secret_path)
         id_ = id_ or secrets["ID"]
-        pw = pw or (secrets["DEMO_PW"] if cls.is_demo() else secrets["PW"])
+        pw = pw or (secrets["DEMO_PW"] if demo else secrets["PW"])
         cert_pw = cert_pw or secrets["CERT_PW"]
         cls.session.Login(id_, pw, cert_pw, 0, False)
+
+    @classmethod
+    def is_login(cls):
+        try:
+            cls.get_servername()
+        except AssertionError:
+            return False
+        else:
+            return True
 
     @classmethod
     def get_account_count(cls):

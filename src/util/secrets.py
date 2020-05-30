@@ -18,7 +18,8 @@ def get_secrets(path: str = None):
         path = path or os.path.join(os.getcwd(), ".secrets.json")
         with open(path) as f:
             return json.load(f)
-    except FileNotFoundError:
+    except FileNotFoundError as e:
+        logger.warn(f"can't find secret file: {e}")
         try:
             return {
                 "ID": os.environ["XING_ID"],
@@ -27,5 +28,5 @@ def get_secrets(path: str = None):
                 "CERT_PW": os.environ["XING_CERT_PW"],
             }
         except KeyError as e:
-            logger.fatal("can't find secret information", e)
+            logger.fatal(f"can't find secret information: {e}")
             raise AssertionError

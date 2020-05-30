@@ -34,6 +34,10 @@ def callback(func):
     return inner
 
 
+def post_quit():
+    ctypes.windll.user32.PostQuitMessage(0)
+
+
 def final_post_quit(func):
     """
     send WM_QUIT message for callback after the func
@@ -44,6 +48,6 @@ def final_post_quit(func):
         try:
             func(*args, **kwargs)
         finally:
-            ctypes.windll.user32.PostQuitMessage(0)
+            post_quit()
 
     return inner
