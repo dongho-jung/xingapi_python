@@ -7,6 +7,10 @@ logger = util.logger.get()
 
 
 class XASessionEventHandler:
+    """
+    Event handler for XASession com object
+    """
+
     @final_post_quit
     def OnLogin(self, code, msg):
         if code == "0000":
