@@ -1,11 +1,19 @@
 import ctypes
 import functools
+import signal
 
 import pythoncom
 
 import util.logger
 
+
+def signal_handler(signal, frame):
+    ctypes.windll.user32.PostQuitMessage(0)
+    raise KeyboardInterrupt
+
+
 logger = util.logger.get()
+signal.signal(signal.SIGINT, signal_handler)
 
 
 def callback(func):
