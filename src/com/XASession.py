@@ -17,6 +17,9 @@ class XASessionEventHandler:
             logger.info("login success")
         else:
             logger.fatal(f"login fail: {msg}")
+            if "3회 오류" in msg:
+                logger.critical(f"accouint invalidation warning!")
+                input("continue?")
             raise AssertionError("login fail")
 
     @final_post_quit
