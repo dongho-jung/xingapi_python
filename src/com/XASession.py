@@ -14,10 +14,14 @@ class XASessionEventHandler:
     @final_post_quit
     def OnLogin(self, code, msg):
         if code == "0000":
-            logger.info("Login success")
+            logger.info("login success")
         else:
-            logger.fatal(f"Login fail: {msg}")
-            raise AssertionError("Login fail")
+            logger.fatal(f"login fail: {msg}")
+            raise AssertionError("login fail")
+
+    @final_post_quit
+    def OnDisconnect(self):
+        logger.fatal("server disconnected")
 
 
 def get_session():

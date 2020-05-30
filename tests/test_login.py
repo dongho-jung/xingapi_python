@@ -5,7 +5,7 @@ from xing import Xing
 
 def test_login_success(caplog):
     Xing.login()
-    assert "Login success" in caplog.text
+    assert "login success" in caplog.text
 
 
 @pytest.mark.parametrize(
@@ -17,4 +17,7 @@ def test_login_success(caplog):
 def test_login_fail(params, demo, caplog):
     Xing.login(demo=demo, **params)
     if not (demo is True and "cert_pw" in params):
-        assert "Login fail" in caplog.text
+        assert "login fail" in caplog.text
+
+    # avoid invalidation of certificate
+    Xing.login()

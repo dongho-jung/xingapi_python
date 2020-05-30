@@ -30,7 +30,7 @@ class Xing:
         port = 20001
         Session.ConnectServer(url, port)
 
-        logger.info(f"Login attempt: {url}:{port}")
+        logger.info(f"login attempt: {url}:{port}")
         secrets = get_secrets(secret_path)
         id_ = id_ or secrets["ID"]
         pw = pw or (secrets["DEMO_PW"] if demo else secrets["PW"])
