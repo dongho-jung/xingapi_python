@@ -138,6 +138,13 @@ class Xing:
         return cls.session.GetAcctNickname(account_number)
 
     @classmethod
+    def get_last_error(cls, with_msg: bool = False):
+        error_code = cls.session.GetLastError()
+        if with_msg:
+            return error_code, cls.session.GetErrorMessage(error_code)
+        return error_code
+
+    @classmethod
     @callback
     def request(cls, res, in_block):
         proxy = cls.get_event_from_pool(res)
