@@ -16,6 +16,18 @@ class XAQueryEventHandler:
     def OnReceiveData(self, code):
         logger.debug(f"OnReceiveData: code={code}")
 
+    @final_post_quit
+    def OnReceiveMessage(self, is_system_error, msg_code, msg):
+        code = int(msg_code)
+        msg = f"OnReceiveMessage: is_system_error={is_system_error}, msg_code={msg_code}, msg={msg}"
+
+        if code < 1000:
+            logger.debug(msg)
+        elif 1000 <= code < 8000:
+            logger.warning(msg)
+        else:
+            logger.fatal(msg)
+
 
 def get_xaquery_event_proxy(res, res_path="C:/eBEST/xingAPI/Res/"):
     res_file_name = os.path.join(res_path, res + ".res")
