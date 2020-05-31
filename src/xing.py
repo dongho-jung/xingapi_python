@@ -1,6 +1,5 @@
 from functools import lru_cache
 from typing import Union, Optional
-import itertools
 
 import pandas as pd
 
@@ -141,30 +140,47 @@ class Xing:
         return cls.session.GetAcctNickname(account_number)
 
     @classmethod
+    def get_error_message(cls, error_code):
+        return cls.session.GetErrorMessage(error_code)
+
+    @classmethod
     def get_last_error(cls, with_msg: bool = False):
         error_code = cls.session.GetLastError()
         if with_msg:
-            return error_code, cls.session.GetErrorMessage(error_code)
+            return error_code, cls.get_error_message(error_code)
         return error_code
 
     @classmethod
     @callback
-    def request(cls, res, in_block):
+    def request(
+        cls, res, in_block, i: Optional[int] = None,
+    ):
         proxy = cls.get_xaquery_event_proxy_from_pool(res)
 
         @timeout()
         def set_field_data(key_, value_):
-            proxy.SetFieldData(f"{res}InBlock", key_, 0, value_)
+            proxy.SetFieldData(f"{res}InBlock{'' if i is None else i}", key_, 0, value_)
 
         for key, value in in_block.items():
             set_field_data(key, value)
-        proxy.Request(0)
+        res = proxy.Request(0)
+        if res < 0:
+            logger.fatal(f"request fail: {res} -> {cls.get_error_message(res)}")
+            post_quit()
+            raise AssertionError(res)
+        return res
 
     @classmethod
-    def get(cls, res, fields: Union[list, str], n: Optional[int] = None):
+    def get(
+        cls,
+        res,
+        fields: Union[list, str],
+        i: Optional[int] = None,
+        n: Optional[int] = None,
+    ):
 
         proxy = cls.get_xaquery_event_proxy_from_pool(res)
-        block_name = f"{res}OutBlock"
+        block_name = f"{res}OutBlock{'' if i is None else i}"
         block_count = proxy.GetBlockCount(block_name)
         n = n or block_count
 
