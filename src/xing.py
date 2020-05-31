@@ -1,6 +1,10 @@
+from functools import lru_cache
+from typing import Union
+
 from util.deco import callback, post_quit
 from util.secrets import get_secrets
 from com.XASession import get_session
+from com.XAQuery import get_xaquery_event_proxy
 import util.logger
 
 logger = util.logger.get()
@@ -8,6 +12,11 @@ logger = util.logger.get()
 
 class Xing:
     session = get_session()
+
+    @classmethod
+    @lru_cache(maxsize=32)
+    def get_event_from_pool(cls, res):
+        return get_xaquery_event_proxy(res)
 
     @classmethod
     def connect(
@@ -127,3 +136,20 @@ class Xing:
     @classmethod
     def get_account_nickname(cls, account_number):
         return cls.session.GetAcctNickname(account_number)
+
+    @classmethod
+    @callback
+    def request(cls, res, in_block):
+        proxy = cls.get_event_from_pool(res)
+        for key, value in in_block.items():
+            proxy.SetFieldData(f"{res}InBlock", key, 0, value)
+
+        proxy.Request(0)
+
+    @classmethod
+    def get(cls, res, fields: Union[list, str]):
+        proxy = cls.get_event_from_pool(res)
+        if isinstance(fields, str):
+            return proxy.GetFieldData(f"{res}OutBlock", fields, 0)
+        else:
+            return {k: proxy.GetFieldData(f"{res}OutBlock", k, 0) for k in fields}
