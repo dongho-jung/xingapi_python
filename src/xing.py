@@ -84,7 +84,7 @@ class Xing:
         cert_pw: str = None,
     ):
         """
-        Login into Ebest secutiry server
+        Login to Ebest secutiry server
         Args:
             demo (bool) <True>: True -> demo server / False -> real server
             secret_path (str): path in which the secret file exists
