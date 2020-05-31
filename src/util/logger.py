@@ -1,3 +1,4 @@
+import inspect
 import os
 
 import logging as _logging
@@ -15,7 +16,7 @@ def get(base: str = "src", root: str = ROOT):
                           e.g. xingapi/src/util/get_credential -> {ROOT}.util.get_credential
     Returns (logging.Logger)
     """
-    base_path = os.path.normpath(__file__).rsplit(base, 1)[-1]
+    base_path = os.path.normpath(inspect.stack()[1].filename).rsplit(base, 1)[-1]
     logger_name = root + base_path.replace(os.sep, ".").rsplit(".", 1)[0]
     return _logging.getLogger(logger_name)
 
