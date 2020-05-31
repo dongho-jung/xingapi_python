@@ -160,7 +160,14 @@ class Xing:
     @classmethod
     def get(cls, res, fields: Union[list, str]):
         proxy = cls.get_xaquery_event_proxy_from_pool(res)
+        block_name = f"{res}OutBlock"
+        block_count = proxy.GetBlockCount(block_name)
         if isinstance(fields, str):
-            return proxy.GetFieldData(f"{res}OutBlock", fields, 0)
+            return (
+                proxy.GetFieldData(block_name, fields, i) for i in range(block_count)
+            )
         else:
-            return {k: proxy.GetFieldData(f"{res}OutBlock", k, 0) for k in fields}
+            return (
+                {k: proxy.GetFieldData(block_name, k, i) for k in fields}
+                for i in range(block_count)
+            )
