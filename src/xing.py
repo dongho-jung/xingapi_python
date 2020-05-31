@@ -15,7 +15,7 @@ class Xing:
 
     @classmethod
     @lru_cache(maxsize=32)
-    def get_event_from_pool(cls, res):
+    def get_xaquery_event_proxy_from_pool(cls, res):
         return get_xaquery_event_proxy(res)
 
     @classmethod
@@ -147,15 +147,19 @@ class Xing:
     @classmethod
     @callback
     def request(cls, res, in_block):
-        proxy = cls.get_event_from_pool(res)
-        for key, value in in_block.items():
-            proxy.SetFieldData(f"{res}InBlock", key, 0, value)
+        proxy = cls.get_xaquery_event_proxy_from_pool(res)
 
+        @timeout()
+        def set_field_data(key_, value_):
+            proxy.SetFieldData(f"{res}InBlock", key_, 0, value_)
+
+        for key, value in in_block.items():
+            set_field_data(key, value)
         proxy.Request(0)
 
     @classmethod
     def get(cls, res, fields: Union[list, str]):
-        proxy = cls.get_event_from_pool(res)
+        proxy = cls.get_xaquery_event_proxy_from_pool(res)
         if isinstance(fields, str):
             return proxy.GetFieldData(f"{res}OutBlock", fields, 0)
         else:
