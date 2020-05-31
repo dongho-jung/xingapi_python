@@ -1,7 +1,7 @@
 from functools import lru_cache
 from typing import Union
 
-from util.deco import callback, post_quit
+from util.deco import callback, post_quit, timeout
 from util.secrets import get_secrets
 from com.XASession import get_session
 from com.XAQuery import get_xaquery_event_proxy

@@ -1,13 +1,14 @@
 import ctypes
 import functools
 import signal
+import threading
 
 import pythoncom
 
 import util.logger
 
 
-def signal_handler(signal, frame):
+def signal_handler(signum, frame):
     ctypes.windll.user32.PostQuitMessage(0)
     raise KeyboardInterrupt
 
@@ -51,3 +52,33 @@ def final_post_quit(func):
             post_quit()
 
     return inner
+
+
+def timeout(wait_sec: int = 5):
+    def deco(func):
+        @functools.wraps(func)
+        def inner(*args, **kwargs):
+            res = [Exception(f"{func.__name__} timeout {wait_sec} seconds")]
+
+            def target():
+                try:
+                    res[0] = func(*args, **kwargs)
+                except Exception as e:
+                    res[0] = e
+
+            t = threading.Thread(target=target)
+            t.daemon = True
+            try:
+                t.start()
+                t.join(wait_sec)
+            except Exception as e:
+                logger.fatal("starting thread error")
+                raise e
+            ret = res[0]
+            if isinstance(ret, BaseException):
+                raise ret
+            return ret
+
+        return inner
+
+    return deco
