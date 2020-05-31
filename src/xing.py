@@ -1,5 +1,8 @@
 from functools import lru_cache
-from typing import Union
+from typing import Union, Optional
+import itertools
+
+import pandas as pd
 
 from util.deco import callback, post_quit, timeout
 from util.secrets import get_secrets
@@ -158,16 +161,16 @@ class Xing:
         proxy.Request(0)
 
     @classmethod
-    def get(cls, res, fields: Union[list, str]):
+    def get(cls, res, fields: Union[list, str], n: Optional[int] = None):
+
         proxy = cls.get_xaquery_event_proxy_from_pool(res)
         block_name = f"{res}OutBlock"
         block_count = proxy.GetBlockCount(block_name)
-        if isinstance(fields, str):
-            return (
-                proxy.GetFieldData(block_name, fields, i) for i in range(block_count)
-            )
-        else:
-            return (
-                {k: proxy.GetFieldData(block_name, k, i) for k in fields}
-                for i in range(block_count)
-            )
+        n = n or block_count
+
+        if not isinstance(fields, list):
+            fields = [fields]
+
+        return pd.DataFrame(
+            {k: proxy.GetFieldData(block_name, k, i) for k in fields} for i in range(n)
+        )
