@@ -1,3 +1,4 @@
+from typing import Optional
 import ctypes
 import functools
 import signal
@@ -8,8 +9,12 @@ import pythoncom
 import util.logger
 
 
-def signal_handler(signum, frame):
+def post_quit():
     ctypes.windll.user32.PostQuitMessage(0)
+
+
+def signal_handler(signum, frame):
+    post_quit()
     raise KeyboardInterrupt
 
 
@@ -35,10 +40,6 @@ def callback(func):
     return inner
 
 
-def post_quit():
-    ctypes.windll.user32.PostQuitMessage(0)
-
-
 def final_post_quit(func):
     """
     send WM_QUIT message for callback after the func
@@ -54,7 +55,7 @@ def final_post_quit(func):
     return inner
 
 
-def timeout(wait_sec: int = 5):
+def timeout(wait_sec: Optional[int] = None):
     def deco(func):
         @functools.wraps(func)
         def inner(*args, **kwargs):
