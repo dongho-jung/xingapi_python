@@ -2,6 +2,7 @@ import os
 import win32com
 
 from util.deco import final_post_quit
+from util.finder import find_res
 import util.logger
 
 logger = util.logger.get()
@@ -29,11 +30,8 @@ class XAQueryEventHandler:
             logger.fatal(msg)
 
 
-def get_xaquery_event_proxy(res, res_path="C:/eBEST/xingAPI/Res/"):
-    res_file_name = os.path.join(res_path, res + ".res")
-    if not os.path.isfile(res_file_name):
-        logger.fatal(f"can't find {res_file_name}")
-        raise FileNotFoundError
+def get_xaquery_event_proxy(res, res_path=None):
+    res_file_name = find_res(res, res_path=res_path)
     event_proxy = win32com.client.DispatchWithEvents(
         "XA_DataSet.XAQuery", XAQueryEventHandler
     )
