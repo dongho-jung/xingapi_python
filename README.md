@@ -61,3 +61,58 @@ Xing.get('t8430', ['hname', 'shcode', 'expcode', 'etfgubun'], n=5)
 3	메리츠화재	000060	KR7000060004	0
 4	삼양홀딩스	000070	KR7000070003	0
 ```
+
+## Getting help message for t0424
+```
+# or if you pass the as_json=True you'll get json format of t0424 res file 
+print(Xing.help('t0424'))
+```
+```
+주식잔고2(t0424)
+t0424InBlock 기본입력 input
+	accno 계좌번호 <class 'str'> 11
+	passwd 비밀번호 <class 'str'> 8
+	prcgb 단가구분 <class 'str'> 1
+	chegb 체결구분 <class 'str'> 1
+	dangb 단일가구분 <class 'str'> 1
+	charge 제비용포함여부 <class 'str'> 1
+	cts_expcode CTS_종목번호 <class 'str'> 22
+t0424OutBlock 출력 output
+	sunamt 추정순자산 <class 'int'> 18
+	dtsunik 실현손익 <class 'int'> 18
+	mamt 매입금액 <class 'int'> 18
+	sunamt1 추정D2예수금 <class 'int'> 18
+	cts_expcode CTS_종목번호 <class 'str'> 22
+	tappamt 평가금액 <class 'int'> 18
+	tdtsunik 평가손익 <class 'int'> 18
+t0424OutBlock1 출력1 output occurs
+	expcode 종목번호 <class 'str'> 12
+	jangb 잔고구분 <class 'str'> 10
+	janqty 잔고수량 <class 'int'> 18
+	mdposqt 매도가능수량 <class 'int'> 18
+	pamt 평균단가 <class 'int'> 18
+	mamt 매입금액 <class 'int'> 18
+	sinamt 대출금액 <class 'int'> 18
+	lastdt 만기일자 <class 'str'> 8
+	msat 당일매수금액 <class 'int'> 18
+	mpms 당일매수단가 <class 'int'> 18
+	mdat 당일매도금액 <class 'int'> 18
+	mpmd 당일매도단가 <class 'int'> 18
+	jsat 전일매수금액 <class 'int'> 18
+	jpms 전일매수단가 <class 'int'> 18
+	jdat 전일매도금액 <class 'int'> 18
+	jpmd 전일매도단가 <class 'int'> 18
+	sysprocseq 처리순번 <class 'int'> 10
+	loandt 대출일자 <class 'str'> 8
+	hname 종목명 <class 'str'> 20
+	marketgb 시장구분 <class 'str'> 1
+	jonggb 종목구분 <class 'str'> 1
+	janrt 보유비중 <class 'float'> 10.2
+	price 현재가 <class 'int'> 8
+	appamt 평가금액 <class 'int'> 18
+	dtsunik 평가손익 <class 'int'> 18
+	sunikrt 수익율 <class 'float'> 10.2
+	fee 수수료 <class 'int'> 10
+	tax 제세금 <class 'int'> 10
+	sininter 신용이자 <class 'int'> 10
+```
