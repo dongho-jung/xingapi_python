@@ -16,7 +16,7 @@ class Xing:
     session = get_session()
 
     @classmethod
-    @lru_cache(maxsize=32)
+    @lru_cache(maxsize=None)
     def get_xaquery_event_proxy_from_pool(cls, res):
         return get_xaquery_event_proxy(res)
 
