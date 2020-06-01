@@ -21,6 +21,10 @@ def get(base: str = "src", root: str = ROOT):
     return _logging.getLogger(logger_name)
 
 
+def set_level(level, root: str = ROOT):
+    _logging.getLogger(root).setLevel(level)
+
+
 _logging.basicConfig(
     level=_logging.INFO,
     format="%(asctime)s    %(name)-12s    %(levelname)-8s    %(message)s",

@@ -4,6 +4,8 @@ from typing import Union, Optional
 import pandas as pd
 
 from util.deco import callback, post_quit, timeout
+from util.finder import find_res
+from util.parser import ResParser
 from util.secrets import get_secrets
 from com.XASession import get_session
 from com.XAQuery import get_xaquery_event_proxy
@@ -190,3 +192,21 @@ class Xing:
         return pd.DataFrame(
             {k: proxy.GetFieldData(block_name, k, i) for k in fields} for i in range(n)
         )
+
+    @classmethod
+    def help(cls, res, res_path=None, as_json=False):
+        with open(find_res(res, res_path)) as f:
+            parsed_res = ResParser.parse(f.read())["FUNC_BLOCK"]
+            if as_json:
+                return parsed_res
+            else:
+                parsed_res_string = parsed_res["__FUNC_META"][1] + "\n"
+                for data_block in parsed_res["DATA_BLOCKS"]:
+                    parsed_res_string += " ".join(data_block.pop("__DATA_META")) + "\n"
+                    for field, value in data_block.items():
+                        parsed_res_string += f"\t{field} {value['desc']} {value['type']} {value['size']}\n"
+                return parsed_res_string
+
+    @staticmethod
+    def set_log_level(level):
+        util.logger.set_level(level)
